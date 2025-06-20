@@ -15,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AccountServiceImpl implements AccountService{
@@ -59,9 +61,11 @@ public class AccountServiceImpl implements AccountService{
 
         for(Object[] obj : listObj){
             FetchAccountDto dto = new FetchAccountDto();
-            dto.setName(obj[0] != null ? (String) obj[0] : null);
-            dto.setEmail(obj[1] != null ? (String) obj[1] : null);
-            dto.setBalance(obj[2] != null ? ((BigDecimal) obj[2]).doubleValue() : null);
+
+            dto.setId(obj[0] != null ? (UUID) obj[0] : null);
+            dto.setUserId(obj[1] != null ? (UUID) obj[1] : null);
+            dto.setBalance(obj[2] != null ? ((BigDecimal) obj[2]).doubleValue() : null );
+            dto.setCreateAt(obj[3] != null ? (Timestamp) obj[3] : null);
             listData.add(dto);
         }
 

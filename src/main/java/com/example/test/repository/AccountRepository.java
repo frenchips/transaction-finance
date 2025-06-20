@@ -12,9 +12,10 @@ import java.util.UUID;
 public interface AccountRepository extends JpaRepository<Account, UUID> {
     @Query(value = """
                 select 
-                    u.name,
-                    u.email,
-                    a.balance
+                    a.id,
+                    a.user_id,
+                    a.balance,
+                    a.create_at
                 from tb_account a
                 inner join tb_user u on a.user_id = u.id 
             """, nativeQuery = true)

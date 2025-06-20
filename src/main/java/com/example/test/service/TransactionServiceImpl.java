@@ -1,11 +1,13 @@
 package com.example.test.service;
 
+import com.example.test.dto.FetchReportDto;
 import com.example.test.dto.FetchTransactionAllDto;
 import com.example.test.entity.Account;
 import com.example.test.entity.Transaction;
 import com.example.test.repository.AccountRepository;
 import com.example.test.repository.TransactionRepository;
 import com.example.test.request.AddTransactionRequest;
+import com.example.test.request.FetchReportRequest;
 import com.example.test.response.Response;
 import com.example.test.response.SaveTransactionResponse;
 import jakarta.transaction.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,4 +105,28 @@ public class TransactionServiceImpl implements TransactionService{
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
+    @Override
+    public ResponseEntity<Response> report(FetchReportRequest request) {
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        List<FetchReportDto> listData = new ArrayList<>();
+        try{
+            List<Object[]> listObj = transactionRepository.report(request.getType(), sdf.parse(request.getStartDate()), sdf.parse(request.getEndDate()));
+            for(Object[] obj : listObj){
+                FetchReportDto dto = new FetchReportDto();
+                dto.setType(obj[0] != null ? (String) obj[0] : null);
+                dto.setTotalTranscation(obj[1] != null ? ((BigDecimal) obj[1]).doubleValue() : null);
+                dto.setTotalAmount(obj[2] != null ? ((BigDecimal) obj[2]).doubleValue() : null);
+
+                listData.add(dto);
+            }
+        }catch(Exception e){
+
+        }
+        Response response = new Response();
+        response.setMessage("Data berhasil ditampilkan");
+        response.setData(listData);
+
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
+    }
 }
